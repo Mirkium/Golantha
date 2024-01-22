@@ -2,8 +2,8 @@ package controller
 
 import (
 	"fmt"
-	templates "koh-lanta/templates"
 	save "koh-lanta/sauvegarde"
+	templates "koh-lanta/templates"
 	"net/http"
 )
 
@@ -29,8 +29,8 @@ func CreateHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func AventurierHandler(w http.ResponseWriter, r *http.Request) {
-
-	templates.Temp.ExecuteTemplate(w, "aventurier", nil)
+	dataPage := save.Info{}
+	templates.Temp.ExecuteTemplate(w, "aventurier", dataPage)
 }
 
 func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
@@ -43,4 +43,10 @@ func Traitement_connexion(w http.ResponseWriter, r *http.Request) {
 	Prenom := r.FormValue("lastName")
 	Password := r.FormValue("password")
 	save.Verif(Nom, Prenom, Password)
+}
+
+func Traitement_create(w http.ResponseWriter, r *http.Request) {
+	Nom := r.FormValue("firstName")
+	Prenom := r.FormValue("lastName")
+	Password := r.FormValue("password")
 }

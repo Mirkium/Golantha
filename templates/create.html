@@ -13,21 +13,21 @@
         <h1>Go-Lanta</h1>
     </header>
     <div class="container">
-        <form id="loginForm" onsubmit="return loginUser()">
+        <form id="loginForm" action="/traitement_create" method="post">
             <h2>Création</h2>
             <div class="input-group">
                 <label for="firstName">Prénom:</label>
-                <input type="text" id="firstName" required>
+                <input type="text" id="firstName" name="firstName" class="input" required>
             </div>
             <div class="input-group">
                 <label for="lastName">Nom:</label>
-                <input type="text" id="lastName" required>
+                <input type="text" id="lastName" name="lastName" class="input" required>
             </div>
             <div class="input-group">
                 <label for="password">Mot de passe:</label>
-                <input type="password" id="password" required>
+                <input type="password" id="password" name="password" class="input" required>
             </div>
-            <button type="submit">Créer</button>
+            <input type="submit" value="Création" class="button">
         </form>
     </div>
 </body>

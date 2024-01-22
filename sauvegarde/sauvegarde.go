@@ -11,84 +11,96 @@ var Nom []string
 var Prenom []string
 var Password []string
 
+var Nom_test []string
+var Prenom_test []string
+var Password_test []string
+
+var Ntest []string
+var Ptest []string
+var Patest []string
+
 func Ajout(name string, lastname string, password string) {
 	Nom.append(Nom, name)
 	Prenom.append(Prenom, lastname)
 	Password.append(Password, password)
+	SauvegarderUtilisateurs(Nom, Prenom, Password)
+}
 
-	file, err := os.Create("sauvegarde.txt")
-	if err != nil {
-		fmt.Println("Erreur lors de l'ouverture du fichier :", err)
-		return
+func Test(name string, lastname string, password string) {
+	Ntest.append(Ntest, name)
+	Ptest.append(Ptest, lastname)
+	Patest.append(Patest, password)
+	Verif()
+	Verification()
+}
+
+func SauvegarderUtilisateurs(noms, prenoms, passwords []string) error {
+	// Vérifier si la longueur des trois listes est la même
+	if len(noms) != len(prenoms) || len(prenoms) != len(passwords) {
+		return fmt.Errorf("Les listes de noms, prénoms et mots de passe doivent avoir la même longueur")
 	}
-	defer file.Close()
 
-	ecrit := bufio.NewWriter(file)
+	// Ouvrir le fichier en mode écriture, le créer s'il n'existe pas
+	fichier, err := os.OpenFile("sauvegarde.txt", os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+	if err != nil {
+		return err
+	}
+	defer fichier.Close()
 
-	for cle, valeur := range Save {
-		_, err := fmt.Fprintf(ecrit, "%s: %s\n", cle, valeur)
+	// Parcourir les listes et écrire chaque entrée dans le fichier
+	for i := 0; i < len(noms); i++ {
+		// Construire la ligne à écrire dans le fichier
+		ligne := fmt.Sprintf("Nom: %s, Prenom: %s, Password: %s\n", noms[i], prenoms[i], passwords[i])
+
+		// Écrire la ligne dans le fichier
+		_, err := fichier.WriteString(ligne)
 		if err != nil {
-			fmt.Println("Erreur lors de l'écriture dans le fichier :", err)
-			return
+			return err
 		}
 	}
-
-	ecrit.Flush()
+	control.ConnexionHandler()
+	fmt.Println("Sauvegarde réussie dans le fichier sauvegarde.txt")
+	return nil
 }
 
-func Verif(name string, lastname string, password string) {
-	utilisateurs, err := chargerUtilisateursDepuisFichier("sauvegarde.txt")
+func Verif() {
+	fichier, err := os.Open("sauvegarde.txt")
 	if err != nil {
-		fmt.Println("Erreur lors du chargement des utilisateurs :", err)
-		return
-	}
-
-	// Exemple d'utilisation de la fonction pour vérifier si un utilisateur est enregistré
-	ok := verifierUtilisateur(utilisateurs, name, lastname)
-	if ok {
-		fmt.Println("L'utilisateur est enregistré.")
-	} else {
-		fmt.Println("L'utilisateur n'est pas enregistré.")
-	}
-}
-
-func ChargerUtilisateursDepuisFichier(nomFichier string) (map[string]Utilisateur, error) {
-	utilisateurs := make(map[string]Utilisateur)
-
-	fichier, err := os.Open(nomFichier)
-	if err != nil {
-		return nil, err
+		return err
 	}
 	defer fichier.Close()
 
 	scanner := bufio.NewScanner(fichier)
 	for scanner.Scan() {
-		ligne := scanner.Text()
-		elements := strings.Split(ligne, ": ")
+		// Diviser la ligne en utilisant la virgule comme séparateur
+		parts := strings.Split(scanner.Text(), ", ")
 
-		if len(elements) == 2 {
-			nomPrenom := elements[0]
-			password := elements[1]
-			nomPrenomElements := strings.Split(nomPrenom, " ")
-			if len(nomPrenomElements) == 2 {
-				prenom := nomPrenomElements[0]
-				nom := nomPrenomElements[1]
-				utilisateur := Utilisateur{Nom: nom, Prenom: prenom, Password: password}
-				utilisateurs[nomPrenom] = utilisateur
+		// Extraire les valeurs de Nom, Prenom et Password
+		for _, part := range parts {
+			if strings.HasPrefix(part, "Nom: ") {
+				Nom_test = append(Nom_test, strings.TrimPrefix(part, "Nom: "))
+			} else if strings.HasPrefix(part, "Prenom: ") {
+				Prenom_test = append(Prenom_test, strings.TrimPrefix(part, "Prenom: "))
+			} else if strings.HasPrefix(part, "Password: ") {
+				Password_test = append(Password_test, strings.TrimPrefix(part, "Password: "))
 			}
 		}
 	}
-
-	if err := scanner.Err(); err != nil {
-		return nil, err
-	}
-
-	return utilisateurs, nil
 }
 
-// Vérifier si un utilisateur est enregistré dans la carte
-func VerifierUtilisateur(utilisateurs map[string]Utilisateur, prenom, nom, password string) bool {
-	cle := fmt.Sprintf("%s %s", prenom, nom)
-	utilisateur, ok := utilisateurs[cle]
-	return ok && utilisateur.Password == password
+func Verification() bool {
+	for i := 0; i < len(Nom_test); i++ {
+		if Ntest[i] == Nom_test[i] {
+			Info.N = Ntest[i]
+			Info.P = Ptest[i]
+			Info.Pass = Patest[i]
+			return true
+		}
+	}
+}
+
+type Info struct {
+	N    string
+	P    string
+	Pass string
 }
