@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	templates "koh-lanta/templates"
+	save "koh-lanta/sauvegarde"
 	"net/http"
 )
 
@@ -35,4 +36,11 @@ func AventurierHandler(w http.ResponseWriter, r *http.Request) {
 func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
 
 	templates.Temp.ExecuteTemplate(w, "404", nil)
+}
+
+func Traitement_connexion(w http.ResponseWriter, r *http.Request) {
+	Nom := r.FormValue("firstName")
+	Prenom := r.FormValue("lastName")
+	Password := r.FormValue("password")
+	save.Verif(Nom, Prenom, Password)
 }

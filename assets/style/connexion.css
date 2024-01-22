@@ -59,14 +59,14 @@ label {
     color: #666;
 }
 
-input {
+.input {
     width: 100%;
     padding: 8px;
     border: 1px solid #ccc;
     border-radius: 4px;
 }
 
-button {
+.button {
     width: 100%;
     padding: 10px;
     background: url('../img/wood1.jpg');
